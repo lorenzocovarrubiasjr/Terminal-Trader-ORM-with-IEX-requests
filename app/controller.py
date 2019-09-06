@@ -59,9 +59,9 @@ def main_loop(account):
             elif int(choice) == 4:
                 account.sell()
                 views.main_menu_welcome(account)
+        #LOG OUT
             elif int(choice) == 5:
                 break
-        #LOG OUT
         except ValueError:
             print("Sorry, Not a Valid Choice!")
             pass

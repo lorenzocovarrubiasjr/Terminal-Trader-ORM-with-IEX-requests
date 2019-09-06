@@ -1,5 +1,6 @@
 import getpass
 import time
+import hashlib 
 
 def login_welcome():
     # display your welcome message here
@@ -27,12 +28,16 @@ def space():
 def input_new_pin():
     # check it out, emojis and hidden password entry
     pin_num = getpass.getpass(prompt="\U0001F512 Choose a PIN#: ")
-    return pin_num
+    encoded_pin = pin_num.encode("utf-8")
+    secure_pin = hashlib.sha256(encoded_pin).hexdigest()
+    return secure_pin
 
 def input_pin():
     # check it out, emojis and hidden password entry
     pin_num = getpass.getpass(prompt="\U0001F512 Enter Your PIN#: ")
-    return pin_num
+    encoded_pin = pin_num.encode("utf-8")
+    secure_pin = hashlib.sha256(encoded_pin).hexdigest()
+    return secure_pin
 
 def display_login_menu():
     # display a menu with create account, login, and quit options
