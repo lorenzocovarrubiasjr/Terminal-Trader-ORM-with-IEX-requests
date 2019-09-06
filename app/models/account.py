@@ -56,12 +56,12 @@ class Account(ORM):
     def positions(self):
         positions = Position.all_from_where_clause("WHERE account_pk = ?", [self.pk])
         for stock in positions:
-            print(stock.stock_symbol, stock.amount)
+            print(stock.symbol, stock.amount)
         return positions
 
-    def make_trade(self):
-        stock = input("Which stock would you like to purchase?")
-        stock_price = util.get_stock_current_price(stock)
+    def buy(self):
+        stock_symbol = input("Which stock would you like to purchase?")
+        stock_price = util.get_stock_current_price(stock_symbol)
         print("The stock price currently is: ",stock_price)
         quantity = float(input("How many shares would you like to purchase?"))
         cost = float(stock_price) * quantity
@@ -69,16 +69,40 @@ class Account(ORM):
             print("Sorry you do not have enough funds to complete this transaction.")
         else:
             self.balance -= cost
-            position = Position.one_from_where_clause("WHERE account_pk = ? and symbol = ?", [self.pk, stock])
+            position = Position.one_from_where_clause("WHERE account_pk = ? and symbol = ?", [self.pk, stock_symbol])
             if position != None:
                 position.amount += quantity
-                position.save
+                position.save()
             else:
-                position_values = {"stock_symbol": stock, "account_pk": self.pk, "amount" : quantity}
+                position_values = {"symbol": stock_symbol, "account_pk": self.pk, "amount" : quantity}
                 position = Position(**position_values)
                 position.save()
             time_of_trade = strftime("%b %d %Y %H:%M:%S", localtime())
-            values = {"stock_symbol": stock, "account_pk": self.pk, "type": "BUY", "quantity": quantity, "created_at": time_of_trade}
+            values = {"stock_symbol": stock_symbol, "account_pk": self.pk, "type": "BUY", "quantity": quantity, "created_at": time_of_trade}
             trade = Trade(**values)
             trade.save()
+            self.save()
+            
+    def sell(self):
+        stock_symbol = input("Which stock would you like to sell?")
+        position = Position.one_from_where_clause("WHERE account_pk = ? and symbol = ?",[self.pk, stock_symbol])
+        if position != None:
+            stock_price = util.get_stock_current_price(stock_symbol)
+            print("The stock price currently is: ",stock_price)
+            quantity = float(input("How many shares would you like to sell?"))
+            if quantity > position.amount:
+                print("Sorry you do not own that many shares in this stock.")
+            else:
+                cost = float(stock_price) * quantity
+                position.amount -= quantity
+                position.save()
+                self.balance += cost 
+                self.save()
+                time_of_trade = strftime("%b %d %Y %H:%M:%S", localtime())
+                values = {"stock_symbol": stock_symbol, "account_pk": self.pk, "type": "SELL", "quantity": quantity, "created_at": time_of_trade}
+                trade = Trade(**values)
+                trade.save()
+        else:
+            print("Sorry, you do not have any shares in this stock.")
+            
             

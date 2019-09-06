@@ -12,5 +12,5 @@ class Trade(ORM):
         self.stock_symbol = kwargs.get("stock_symbol")
         self.account_pk = kwargs.get("account_pk")
         self.type = kwargs.get("type")
-        self.type = kwargs.get("quantity")
+        self.quantity = kwargs.get("quantity")
         self.created_at = kwargs.get("created_at")

@@ -32,7 +32,7 @@ def login_loop():
                 return loaded_account
         #EXIT PROGRAM
         elif int(choice) == 3:													
-            break																
+            break															
 
 def main_loop(account):																											
     views.space()																
@@ -40,25 +40,31 @@ def main_loop(account):
     views.space()																
     while True:																	
         views.display_main_menu()												
-        choice = views.get_login_choice()										
-        if int(choice) > 5:														
-            print("That is not an option!")
-            views.space()
+        choice = views.get_login_choice()	
+        try: 								
+            if int(choice) > 5:
+                print("That is not an option!")
+                views.space()
         #DEPOSIT MONEY INTO ACCOUNT
-        elif int(choice) == 1:
-            account.deposit(float(input("How much would you like to deposit? ")))
+            elif int(choice) == 1:
+                account.deposit(float(input("How much would you like to deposit? ")))
         #WITHDRAW MONEY FROM ACCOUNT
-        elif int(choice) == 2:
-            account.withdraw(float(input("How much would you like to withdraw?")))
+            elif int(choice) == 2:
+                account.withdraw(float(input("How much would you like to withdraw?")))
         #PURCHASE STOCK
-        elif int(choice) == 3:
-            account.make_trade()
+            elif int(choice) == 3:
+                account.buy()
+                views.main_menu_welcome(account)
         #SELL STOCK
-        elif int(choice) == 4:
-            pass
-        elif int(choice) == 5:
-            break
+            elif int(choice) == 4:
+                account.sell()
+                views.main_menu_welcome(account)
+            elif int(choice) == 5:
+                break
         #LOG OUT
+        except ValueError:
+            print("Sorry, Not a Valid Choice!")
+            pass
 
 def run():
     while True:
